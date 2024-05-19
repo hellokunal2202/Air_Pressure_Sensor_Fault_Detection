@@ -3,6 +3,9 @@ import os,sys
 from sensor.exception import SensorException
 TRAIN_FILE_NAME = "train.csv"
 TEST_FILE_NAME = "test.csv"
+TRANSFORMER_OBJECT_FILE_NAME = "transformer.pkl"
+TARGET_ENCODER_OBJECT_FILE_NAME = "target_encoder.pkl"
+MODEL_FILE_NAME = "model.pkl"
 
 #creating artifact directory
 class TrainingPipelineConfig:
@@ -41,3 +44,18 @@ class DataValidationConfig:
             self.missing_thresold = 70
         except Exception as e:
                 raise SensorException(e, sys)
+        
+class DataTransformationConfig:
+    def __init__(self,training_pipeline_config:TrainingPipelineConfig):
+        try:
+            data_transformation_dir = os.path.join(training_pipeline_config.artifact_dir,"data_transformation")
+            self.transform_obj_dir = os.path.join(data_transformation_dir,"transformer")
+            self.transform_object_path = os.path.join(self.transform_obj_dir,TRANSFORMER_OBJECT_FILE_NAME)
+            self.transform_data = os.path.join(data_transformation_dir,"transform_data")
+            self.transform_train_path = os.path.join(self.transform_data,TRAIN_FILE_NAME.replace("csv","npz"))
+            self.transform_test_path = os.path.join(self.transform_data,TEST_FILE_NAME.replace("csv","npz"))
+            self.target_encoder_path = os.path.join(data_transformation_dir,"target_encoder",TARGET_ENCODER_OBJECT_FILE_NAME) ##for target column encoding
+            self.schema_file_path=os.path.join("schema.yaml")
+        except Exception as e:
+            print(e)
+            raise SensorException(e, sys)
