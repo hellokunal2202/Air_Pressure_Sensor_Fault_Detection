@@ -15,7 +15,7 @@ class TrainingPipelineConfig:
 
 #creating each component output directory
 class DataIngestionConfig:
-    def __init__(self,training_pipeline_config:TrainingPipelineConfig):
+    def __init__(self,training_pipeline_config:TrainingPipelineConfig):  #to get the reference of artifact directory
         try:
             data_ingestion_dir = os.path.join(training_pipeline_config.artifact_dir,"data_ingestion") 
             self.dataset_dir = os.path.join(data_ingestion_dir,"dataset")
@@ -58,4 +58,14 @@ class DataTransformationConfig:
             self.schema_file_path=os.path.join("schema.yaml")
         except Exception as e:
             print(e)
+            raise SensorException(e, sys)
+
+class ModelTrainerConfig:
+    def __init__(self,training_pipeline_config:TrainingPipelineConfig):
+        try:
+            model_trainer_dir = os.path.join(training_pipeline_config.artifact_dir , "model_trainer")
+            self.model_path = os.path.join(model_trainer_dir,"model",MODEL_FILE_NAME)
+            self.expected_score = 0.7 #minimum score expected
+            self.overfitting_threshold = 0.1
+        except Exception as e:
             raise SensorException(e, sys)
